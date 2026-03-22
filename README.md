@@ -50,8 +50,8 @@ Check with: `node --version`. Download from https://nodejs.org if needed.
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/famtalk.git
-cd famtalk
+git clone https://github.com/VikFinlay/FamTalk.git
+cd FamTalk
 
 # 2. Run the setup wizard — it will ask you for your credentials
 node setup.js
