@@ -1,0 +1,30 @@
+{
+  "_instructions": "Download your real google-services.json from Firebase Console → Project settings → Your apps → Android app → Download google-services.json. Place it in the root of the project (same folder as package.json). Never commit the real file — it is gitignored.",
+  "project_info": {
+    "project_number": "YOUR_PROJECT_NUMBER",
+    "project_id": "your-project-id",
+    "storage_bucket": "your-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:YOUR_PROJECT_NUMBER:android:XXXXXXXXXXXXXXXX",
+        "android_client_info": {
+          "package_name": "com.yourname.familytalk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "YOUR_ANDROID_API_KEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,191 @@
+#!/usr/bin/env node
+'use strict';
+
+/**
+ * FamTalk Setup Wizard
+ * Run with: node setup.js
+ *
+ * This script collects your Firebase and Expo credentials
+ * and writes them to src/user-config.js (gitignored).
+ * Your credentials are NEVER committed to the repository.
+ */
+
+const readline = require('readline');
+const fs = require('fs');
+const path = require('path');
+
+const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+
+const GREEN  = '\x1b[32m';
+const YELLOW = '\x1b[33m';
+const CYAN   = '\x1b[36m';
+const BOLD   = '\x1b[1m';
+const RESET  = '\x1b[0m';
+
+function ask(question) {
+  return new Promise((resolve) => {
+    rl.question(question, (answer) => resolve(answer.trim()));
+  });
+}
+
+function line() { console.log('  ' + '─'.repeat(58)); }
+function title(text) { console.log(`\n${BOLD}${CYAN}  ${text}${RESET}`); line(); }
+function info(text)  { console.log(`  ${text}`); }
+function hint(text)  { console.log(`  ${YELLOW}${text}${RESET}`); }
+function ok(text)    { console.log(`  ${GREEN}${text}${RESET}`); }
+
+function validate(value, name) {
+  if (!value) {
+    console.log(`\n  ⚠️  ${name} cannot be empty. Please try again.\n`);
+    return false;
+  }
+  return true;
+}
+
+async function askRequired(prompt, name) {
+  let value = '';
+  while (!value) {
+    value = await ask(`  ${prompt}: `);
+    if (!validate(value, name)) value = '';
+  }
+  return value;
+}
+
+async function main() {
+  console.clear();
+  console.log('');
+  title('🏠  FamTalk Setup Wizard');
+  console.log('');
+  info('This wizard creates your personal src/user-config.js file.');
+  info('That file is gitignored — your credentials stay on your machine.');
+  console.log('');
+  info('Before you start, make sure you have:');
+  hint('  • A Firebase project   → https://console.firebase.google.com');
+  hint('  • An Expo account      → https://expo.dev');
+  console.log('');
+  info('Press Ctrl+C at any time to cancel.');
+  console.log('');
+  await ask('  Press Enter to continue...');
+
+  // ─────────────────────────────────────────────
+  // STEP 1 — Firebase Web Config
+  // ─────────────────────────────────────────────
+  title('STEP 1 / 3  —  Firebase Web Configuration');
+  console.log('');
+  info('How to find these values:');
+  info('  1. Open https://console.firebase.google.com');
+  info('  2. Select your project');
+  info('  3. Click the ⚙️  gear icon → "Project settings"');
+  info('  4. Scroll down to "Your apps" → click your Web app');
+  info('     (if you have no Web app, click "Add app" → Web)');
+  info('  5. Under "SDK setup and configuration" select "Config"');
+  info('  6. Copy each value below from the firebaseConfig object');
+  console.log('');
+
+  const apiKey            = await askRequired('Firebase API Key', 'API Key');
+  const authDomain        = await askRequired('Auth Domain  (e.g. myproject.firebaseapp.com)', 'Auth Domain');
+  const projectId         = await askRequired('Project ID   (e.g. myproject-abc12)', 'Project ID');
+  const storageBucket     = await askRequired('Storage Bucket  (e.g. myproject.firebasestorage.app)', 'Storage Bucket');
+  const messagingSenderId = await askRequired('Messaging Sender ID  (numbers only)', 'Messaging Sender ID');
+  const appId             = await askRequired('App ID  (e.g. 1:123456:web:abcdef)', 'App ID');
+
+  // ─────────────────────────────────────────────
+  // STEP 2 — Expo Project ID
+  // ─────────────────────────────────────────────
+  title('STEP 2 / 3  —  Expo Project ID');
+  console.log('');
+  info('How to find your Expo Project ID:');
+  info('  Option A — from the web:');
+  info('    1. Go to https://expo.dev → sign in');
+  info('    2. Open your project');
+  info('    3. Copy the "Project ID" on the Overview page');
+  info('       (format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)');
+  console.log('');
+  info('  Option B — create a new project via CLI:');
+  hint('    npm install -g eas-cli');
+  hint('    npx eas init');
+  info('    Then check expo.dev for the generated Project ID');
+  console.log('');
+
+  const expoProjectId = await askRequired('Expo Project ID', 'Expo Project ID');
+
+  // ─────────────────────────────────────────────
+  // STEP 3 — Android Package Name
+  // ─────────────────────────────────────────────
+  title('STEP 3 / 3  —  Android Package Name');
+  console.log('');
+  info('This is the unique identifier for your app on Android.');
+  info('Format  : com.yourname.appname  (lowercase, letters, numbers, dots)');
+  info('Example : com.smith.familytalk');
+  console.log('');
+  hint('  ⚠️  Once you distribute the APK this cannot be changed.');
+  console.log('');
+
+  const androidPackage = await askRequired('Android Package Name', 'Android Package Name');
+
+  // ─────────────────────────────────────────────
+  // Write src/user-config.js
+  // ─────────────────────────────────────────────
+  const configContent = `// ============================================================
+// AUTO-GENERATED by setup.js — DO NOT COMMIT THIS FILE
+// Run "node setup.js" again to update these values.
+// ============================================================
+
+module.exports = {
+
+  // Firebase — https://console.firebase.google.com
+  firebase: {
+    apiKey:            '${apiKey}',
+    authDomain:        '${authDomain}',
+    projectId:         '${projectId}',
+    storageBucket:     '${storageBucket}',
+    messagingSenderId: '${messagingSenderId}',
+    appId:             '${appId}',
+  },
+
+  // Expo — https://expo.dev
+  expoProjectId: '${expoProjectId}',
+
+  // Android identifier
+  androidPackage: '${androidPackage}',
+};
+`;
+
+  const configPath = path.join(__dirname, 'src', 'user-config.js');
+  fs.writeFileSync(configPath, configContent, 'utf8');
+
+  // ─────────────────────────────────────────────
+  // Done — next steps
+  // ─────────────────────────────────────────────
+  title('✅  Configuration saved!');
+  console.log('');
+  ok('  src/user-config.js has been created.');
+  console.log('');
+  info('One manual step remaining — download google-services.json:');
+  info('');
+  info('  1. Go to Firebase Console → Project settings');
+  info('  2. Under "Your apps", find or create an Android app');
+  hint(`     Use this package name: ${androidPackage}`);
+  info('  3. Click "Download google-services.json"');
+  info('  4. Place the file in the ROOT of this project');
+  hint('     (same folder as package.json and setup.js)');
+  info('');
+  info('Then install dependencies and build:');
+  info('');
+  hint('  npm install');
+  hint('  npx eas build --platform android --profile preview');
+  info('');
+  info('Expo will give you a download link for the APK when done.');
+  info('Share that link with your family!');
+  console.log('');
+  info('📖  Full step-by-step guide: README.md');
+  console.log('');
+
+  rl.close();
+}
+
+main().catch((err) => {
+  console.error('\n  Setup failed:', err.message);
+  rl.close();
+  process.exit(1);
+});
