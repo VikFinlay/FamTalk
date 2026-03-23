@@ -64,6 +64,7 @@ const strings = {
     langIt: '🇮🇹 Italiano',
     langTh: '🇹🇭 Thai',
     langZh: '🇨🇳 Cinese',
+    langEn: '🇬🇧 Inglese',
 
     // Groups
     newContact: 'Contatto',
@@ -79,6 +80,9 @@ const strings = {
     participants: 'Partecipanti',
     me: '(tu)',
     createGroup: 'Crea gruppo',
+    knownContacts: 'I tuoi contatti',
+    noKnownContacts: 'Nessun contatto disponibile',
+    orAddByCode: 'Oppure aggiungi tramite codice invito',
 
     // Chat
     typing: 'sta scrivendo...',
@@ -88,6 +92,8 @@ const strings = {
     deleteChat: 'Elimina chat',
     deleteChatConfirm: 'Sei sicuro? La chat verrà eliminata per tutti i partecipanti.',
     delete: 'Elimina',
+    leaveGroup: 'Esci dal gruppo',
+    leaveGroupConfirm: 'Sei sicuro di voler uscire da questo gruppo?',
   },
 
   th: {
@@ -155,6 +161,7 @@ const strings = {
     langIt: '🇮🇹 อิตาลี',
     langTh: '🇹🇭 ภาษาไทย',
     langZh: '🇨🇳 จีน',
+    langEn: '🇬🇧 อังกฤษ',
 
     // Groups
     newContact: 'ผู้ติดต่อ',
@@ -170,6 +177,9 @@ const strings = {
     participants: 'สมาชิก',
     me: '(คุณ)',
     createGroup: 'สร้างกลุ่ม',
+    knownContacts: 'ผู้ติดต่อของคุณ',
+    noKnownContacts: 'ไม่มีผู้ติดต่อ',
+    orAddByCode: 'หรือเพิ่มด้วยรหัสเชิญ',
 
     // Chat
     typing: 'กำลังพิมพ์...',
@@ -179,6 +189,8 @@ const strings = {
     deleteChat: 'ลบการสนทนา',
     deleteChatConfirm: 'แน่ใจไหม? การสนทนาจะถูกลบสำหรับทุกคน',
     delete: 'ลบ',
+    leaveGroup: 'ออกจากกลุ่ม',
+    leaveGroupConfirm: 'แน่ใจหรือไม่ว่าต้องการออกจากกลุ่มนี้?',
   },
 
   zh: {
@@ -246,6 +258,7 @@ const strings = {
     langIt: '🇮🇹 意大利语',
     langTh: '🇹🇭 泰语',
     langZh: '🇨🇳 中文',
+    langEn: '🇬🇧 英语',
 
     // Groups
     newContact: '联系人',
@@ -261,6 +274,9 @@ const strings = {
     participants: '成员',
     me: '(我)',
     createGroup: '创建群组',
+    knownContacts: '您的联系人',
+    noKnownContacts: '暂无联系人',
+    orAddByCode: '或通过邀请码添加',
 
     // Chat
     typing: '正在输入...',
@@ -270,16 +286,115 @@ const strings = {
     deleteChat: '删除聊天',
     deleteChatConfirm: '确定要删除此聊天？所有参与者的聊天都将被删除。',
     delete: '删除',
+    leaveGroup: '退出群组',
+    leaveGroupConfirm: '确定要退出此群组吗？',
+  },
+  en: {
+    // Login
+    tagline: 'Your family, without language barriers',
+    login: 'Log in',
+    noAccount: "Don't have an account? Sign up",
+    errorEmptyFields: 'Enter email and password',
+    errorWrongCredentials: 'Incorrect email or password',
+
+    // Register
+    createAccount: 'Create your account',
+    namePlaceholder: 'Name',
+    passwordPlaceholder: 'Password (min. 6 characters)',
+    translationLang: 'Your language (for translation)',
+    register: 'Sign up',
+    hasAccount: 'Already have an account? Log in',
+    errorFillFields: 'Please fill in all fields',
+    errorPasswordShort: 'Password must be at least 6 characters',
+    errorEmailInUse: 'Email already in use',
+    errorRegisterFailed: 'Registration failed. Please try again.',
+
+    // Home
+    noChatsYet: 'No chats yet.',
+    noChatsSubtext: 'Add a contact with an invite code to get started.',
+    noMessages: 'No messages yet',
+    yourProfile: 'Your profile',
+    labelName: 'Name',
+    labelLanguage: 'Language',
+    yourInviteCode: 'Your invite code',
+    shareCodeHint: 'Share it to be added to a chat',
+    close: 'Close',
+    addContact: 'Add contact',
+    addContactHint: 'Ask your contact for their invite code (e.g. FMLY-K7XM)',
+    cancel: 'Cancel',
+    add: 'Add',
+    notFound: 'Not found',
+    userNotFound: 'No user found with this invite code.',
+    errorSelf: 'You cannot add yourself.',
+    error: 'Error',
+
+    // Settings
+    settingsTitle: 'Settings',
+    sectionLanguages: 'Your languages',
+    labelTranslationLang: 'Translation language',
+    labelTranslationLangSub: 'Messages you receive are translated into this language',
+    labelUiLang: 'Interface language',
+    labelUiLangSub: 'The language used for buttons and text in the app',
+    sectionApi: 'Translation (Admin)',
+    labelApiKey: 'Anthropic API Key',
+    labelModel: 'Model',
+    modelFast: 'fast and affordable',
+    modelAccurate: 'more accurate (recommended)',
+    saveLangs: 'Save languages',
+    saveAdmin: 'Save settings',
+    savedTitle: 'Saved ✓',
+    savedLangsMessage: 'Language preferences updated.',
+    savedAdminMessage: 'Settings updated successfully.',
+    warningApiKey: 'The Anthropic API key must start with "sk-ant-"',
+    warning: 'Warning',
+    inviteCodeTitle: 'Your invite code',
+    inviteCodeSub: 'Share it with your family to add them to the app',
+
+    // Language names
+    langIt: '🇮🇹 Italian',
+    langTh: '🇹🇭 Thai',
+    langZh: '🇨🇳 Chinese',
+    langEn: '🇬🇧 English',
+
+    // Groups
+    newContact: 'Contact',
+    newGroup: 'Group',
+    newGroupTitle: 'New group',
+    groupNameLabel: 'Group name',
+    groupNamePlaceholder: 'e.g. Family 👨‍👩‍👧',
+    addMembers: 'Add members',
+    inviteCodePlaceholder: 'Invite code (FMLY-XXXX)',
+    alreadyAdded: 'Already added.',
+    groupNameRequired: 'Enter a name for the group.',
+    groupMemberRequired: 'Add at least one member.',
+    participants: 'Participants',
+    me: '(you)',
+    createGroup: 'Create group',
+    knownContacts: 'Your contacts',
+    noKnownContacts: 'No contacts available',
+    orAddByCode: 'Or add via invite code',
+
+    // Chat
+    typing: 'typing...',
+    online: 'online',
+    offline: 'offline',
+    participantsCount: 'participants',
+    deleteChat: 'Delete chat',
+    deleteChatConfirm: 'Are you sure? The chat will be deleted for all participants.',
+    delete: 'Delete',
+    leaveGroup: 'Leave group',
+    leaveGroupConfirm: 'Are you sure you want to leave this group?',
   },
 };
 
 export function t(lang, key) {
-  const l = strings[lang] || strings['it'];
-  return l[key] ?? strings['it'][key] ?? key;
+  const l = strings[lang] || strings['en'];
+  return l[key] ?? strings['en'][key] ?? key;
 }
 
 export const LANGUAGES = [
   { code: 'it', flag: '🇮🇹', key: 'langIt' },
   { code: 'th', flag: '🇹🇭', key: 'langTh' },
   { code: 'zh', flag: '🇨🇳', key: 'langZh' },
+  { code: 'en', flag: '🇬🇧', key: 'langEn' },
 ];

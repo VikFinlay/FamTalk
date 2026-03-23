@@ -16,9 +16,9 @@ FamTalk lets families communicate across language barriers in real time. Message
 - 🎙️ Voice messages with automatic transcription (OpenAI Whisper)
 - 📷 Photo sharing
 - 🔔 Push notifications
-- 👥 Group chats with per-member language settings
+- 👥 Group chats with per-member language settings, contact picker, and leave group support
 - 😄 Emoji reactions and message replies
-- 🌐 Multi-language UI (Italian, Chinese, Thai — easily extensible)
+- 🌐 Multi-language UI (Italian, English, Chinese, Thai — easily extensible)
 - 🌙 Dark theme
 
 ---
@@ -290,7 +290,7 @@ Now share the APK download link with your family and have them register!
 - In group chats, one API call translates to all participants' languages simultaneously
 - Voice messages are first transcribed (OpenAI Whisper), then translated
 
-Supported languages out of the box: 🇮🇹 Italian, 🇨🇳 Chinese, 🇹🇭 Thai.
+Supported languages out of the box: 🇮🇹 Italian, 🇬🇧 English, 🇨🇳 Chinese, 🇹🇭 Thai.
 See [CONTRIBUTING.md](CONTRIBUTING.md) to add more.
 
 ---

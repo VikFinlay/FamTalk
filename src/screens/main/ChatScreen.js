@@ -7,6 +7,7 @@ import {
 import {
   collection, query, orderBy, onSnapshot,
   addDoc, serverTimestamp, doc, updateDoc, getDoc,
+  arrayRemove, deleteDoc,
 } from 'firebase/firestore';
 import { ref, deleteObject } from 'firebase/storage';
 import * as ImagePicker from 'expo-image-picker';
@@ -619,6 +620,57 @@ export default function ChatScreen({ route, navigation }) {
     );
   };
 
+  const leaveGroup = () => {
+    Alert.alert(
+      t('leaveGroup'),
+      t('leaveGroupConfirm'),
+      [
+        { text: t('cancel'), style: 'cancel' },
+        {
+          text: t('leaveGroup'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const chatRef = doc(db, 'chats', chatId);
+              const chatSnap = await getDoc(chatRef);
+              const chatData = chatSnap.data();
+              const remaining = chatData.participants.filter((uid) => uid !== user.uid);
+
+              if (remaining.length === 0) {
+                await deleteDoc(chatRef);
+              } else {
+                const updates = {
+                  participants: arrayRemove(user.uid),
+                  [`participantNames.${user.uid}`]: null,
+                  [`participantLanguages.${user.uid}`]: null,
+                };
+                // Trasferisci admin se necessario
+                if (chatData.adminUid === user.uid) {
+                  updates.adminUid = remaining[0];
+                }
+                await updateDoc(chatRef, updates);
+              }
+              navigation.replace('Home');
+            } catch (e) {
+              Alert.alert(t('error'), e.message);
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const showGroupOptions = () => {
+    Alert.alert(
+      contactName,
+      null,
+      [
+        { text: t('leaveGroup'), style: 'destructive', onPress: leaveGroup },
+        { text: t('cancel'), style: 'cancel' },
+      ]
+    );
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -657,6 +709,11 @@ export default function ChatScreen({ route, navigation }) {
         >
           <Text style={styles.contextBtnText}>🌐</Text>
         </TouchableOpacity>
+        {isGroup && (
+          <TouchableOpacity style={styles.groupOptionsBtn} onPress={showGroupOptions}>
+            <Text style={styles.groupOptionsBtnText}>⋮</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <FlatList
@@ -1042,6 +1099,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceElevated,
     justifyContent: 'center', alignItems: 'center',
     borderWidth: 1, borderColor: colors.border,
+  },
+  groupOptionsBtn: {
+    width: 36, height: 36, borderRadius: 18,
+    justifyContent: 'center', alignItems: 'center',
+    marginLeft: 6,
+  },
+  groupOptionsBtnText: {
+    color: colors.textSecondary, fontSize: 22, lineHeight: 26,
   },
   contextBtnActive: {
     borderColor: colors.primary,
