@@ -18,7 +18,7 @@ FamTalk lets families communicate across language barriers in real time. Message
 - 🔔 Push notifications
 - 👥 Group chats with per-member language settings, contact picker, and leave group support
 - 😄 Emoji reactions and message replies
-- 🌐 Multi-language UI (Italian, English, Chinese, Thai — easily extensible)
+- 🌐 Multi-language UI (Italian, English, Chinese, Thai, Dutch, Spanish, French, Portuguese, Russian — easily extensible)
 - 🌙 Dark theme
 
 ---
@@ -397,7 +397,7 @@ You're done with the hard part. Now:
 2. Send the link to your family members via WhatsApp, email, or any messaging app
 3. They tap the link on their Android phone, download the APK, and install it
    - They may need to allow "Install from unknown sources" once
-4. They open FamTalk, tap **Register**, choose their name and their language (Italian, English, Chinese, or Thai)
+4. They open FamTalk, tap **Register**, choose their name and their language (Italian, English, Chinese, Thai, Dutch, Spanish, French, Portuguese, or Russian)
 5. They add each other using **invite codes** — each user has a unique code visible in their profile
 
 That's it. **Your family members don't need Firebase, Expo, Node.js, or any technical knowledge.** They just install and use the app like any other.
@@ -414,7 +414,7 @@ That's it. **Your family members don't need Firebase, Expo, Node.js, or any tech
 - In group chats, one API call translates to all participants' languages simultaneously
 - Voice messages are first transcribed (OpenAI Whisper), then translated
 
-Supported languages out of the box: 🇮🇹 Italian, 🇬🇧 English, 🇨🇳 Chinese, 🇹🇭 Thai.
+Supported languages out of the box: 🇮🇹 Italian, 🇬🇧 English, 🇨🇳 Chinese, 🇹🇭 Thai, 🇳🇱 Dutch, 🇪🇸 Spanish, 🇫🇷 French, 🇧🇷 Portuguese, 🇷🇺 Russian.
 See [CONTRIBUTING.md](CONTRIBUTING.md) to add more.
 
 ---

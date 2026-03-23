@@ -6,6 +6,12 @@ const LANG_NAMES = {
   it: 'Italian',
   th: 'Thai',
   zh: 'Chinese (Simplified)',
+  en: 'English',
+  nl: 'Dutch',
+  es: 'Spanish',
+  fr: 'French',
+  pt: 'Portuguese (Brazilian)',
+  ru: 'Russian',
 };
 
 // Cache in memoria — evita un getDoc Firestore ad ogni traduzione
