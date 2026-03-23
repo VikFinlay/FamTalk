@@ -23,26 +23,54 @@ FamTalk lets families communicate across language barriers in real time. Message
 
 ---
 
-## Before You Start
+## Who needs to do this?
 
-You will need to create two free accounts:
+> **Only the admin — once.**
+
+The setup described below (Firebase, Expo, building the APK) is done **a single time by one person** — the admin, i.e. whoever hosts the app for their family or group of friends. It takes 30–60 minutes the first time.
+
+Once the admin has built the APK, **everyone else just receives a download link and installs it on their phone.** No accounts, no technical steps, no configuration — they open the app, register, and start chatting. That's it.
+
+---
+
+## What You'll Need
+
+**Accounts to create (all free):**
 
 | Service | Purpose | Link |
 |---------|---------|------|
-| **Firebase** | Database, auth, file storage | https://console.firebase.google.com |
+| **Firebase** | Database, authentication, file storage | https://console.firebase.google.com |
 | **Expo** | Building and distributing the APK | https://expo.dev |
 
-For AI translation (optional, but needed to use the translation features):
+**For AI translation (required to use translation and voice features):**
 
 | Service | Purpose | Link |
 |---------|---------|------|
 | **Anthropic** | Message translation | https://console.anthropic.com |
-| **OpenAI** | Voice transcription | https://platform.openai.com |
+| **OpenAI** | Voice message transcription | https://platform.openai.com |
 
-The API keys for Anthropic and OpenAI are **not** part of the setup wizard — the first user who logs in becomes the admin and enters them directly inside the app (Settings screen).
+The Anthropic and OpenAI API keys are **not** part of the setup wizard — the admin enters them directly inside the app after the first login (Settings screen). They are stored securely in your Firebase project, never in the code.
 
-You also need **Node.js** installed on your computer.
-Check with: `node --version`. Download from https://nodejs.org if needed.
+**On your computer:**
+- **Node.js** — check with `node --version`, download from https://nodejs.org if needed
+- **Git** — to clone this repository
+
+---
+
+## Cost Overview
+
+Everything runs on free tiers and is effectively **free for a family or small group.**
+
+| Service | Free tier | Credit card required? |
+|---------|-----------|----------------------|
+| Firebase Authentication | 50,000 users/month | No |
+| Firebase Firestore | 50,000 reads/day, 20,000 writes/day, 1 GB storage | No |
+| Firebase Storage | 5 GB storage, 1 GB transfer/day | **Yes** (Blaze plan) |
+| Expo EAS Build | 30 builds/month | No |
+| Anthropic API | Pay per use (~$0.001 per message) | Yes |
+| OpenAI API | Pay per use (~$0.006 per minute of audio) | Yes |
+
+> **Firebase Storage note:** As of early 2026, Firebase requires the **Blaze (pay-as-you-go) plan** to use Storage. This means you need to add a credit card to your Firebase account. However, you will **not be charged** as long as you stay within the free tier limits (5 GB storage, 1 GB/day transfer), which is more than enough for any family chat. Google will only charge you if you explicitly exceed those limits.
 
 ---
 
@@ -56,7 +84,7 @@ cd FamTalk
 # 2. Run the setup wizard — it will ask you for your credentials
 node setup.js
 
-# 3. Download google-services.json from Firebase (see Step 3 below)
+# 3. Download google-services.json from Firebase (see Step 4 below)
 #    and place it in the root of the project
 
 # 4. Install dependencies
@@ -66,48 +94,78 @@ npm install
 npx eas build --platform android --profile preview
 ```
 
-Expo will build the APK in the cloud and give you a download link. Share it with your family!
+Expo builds in the cloud and gives you a download link. Share it with your family!
 
 ---
 
 ## Detailed Setup Guide
 
-Follow these steps if you are new to Firebase or Expo.
+Follow these steps carefully if you are new to Firebase or Expo. The whole process takes about 30–60 minutes, and you only ever do it once.
 
 ---
 
 <details>
 <summary><strong>Step 1 — Create a Firebase project</strong></summary>
 
-1. Go to https://console.firebase.google.com
+1. Go to https://console.firebase.google.com and sign in with your Google account
 2. Click **"Add project"** (or **"Create a project"**)
-3. Enter a project name (e.g. `my-famtalk`)
-4. Google Analytics: you can disable it — it is not required
-5. Click **"Create project"** and wait for it to finish
-6. Click **"Continue"** to open your new project
+3. Enter a project name (e.g. `my-famtalk`) — this is just for you, it won't be visible to users
+4. On the Google Analytics screen, you can safely disable it — it is not needed
+5. Click **"Create project"** and wait for the spinner to finish (about 30 seconds)
+6. Click **"Continue"** to open your new project dashboard
 
 </details>
 
 ---
 
 <details>
-<summary><strong>Step 2 — Enable Firebase services</strong></summary>
+<summary><strong>Step 2 — Upgrade to the Blaze plan (required for Storage)</strong></summary>
 
-Inside your Firebase project, enable these three services:
+Firebase Storage requires the Blaze (pay-as-you-go) plan. You need to add a credit card, but **you will not be charged** as long as you stay within the generous free tier (5 GB storage, 1 GB/day transfer).
 
-### Authentication
+1. In the Firebase Console, look at the bottom-left corner — you will see **"Spark plan"**
+2. Click on it, then click **"Upgrade"**
+3. Follow the prompts to link a Google Cloud billing account
+   - If you don't have one, you'll be asked to create one — this requires a credit card
+   - Google may offer a free credit when you sign up
+4. Select the **Blaze** plan and confirm
+
+> You can set a **budget alert** in Google Cloud Console (https://console.cloud.google.com) to get notified if spending ever exceeds $1 — this gives you extra peace of mind. For a family chat app, it will realistically always be $0.
+
+</details>
+
+---
+
+<details>
+<summary><strong>Step 3 — Enable Authentication</strong></summary>
+
 1. In the left sidebar click **"Build" → "Authentication"**
 2. Click **"Get started"**
-3. Under **"Sign-in method"**, click **"Email/Password"**
-4. Toggle **"Email/Password"** to **Enabled**
-5. Click **"Save"**
+3. Click on the **"Sign-in method"** tab
+4. Click **"Email/Password"**
+5. Toggle the first switch (**"Email/Password"**) to **Enabled**
+6. Leave "Email link (passwordless sign-in)" disabled
+7. Click **"Save"**
 
-### Firestore Database
-1. In the sidebar click **"Build" → "Firestore Database"**
+Authentication is now configured. No billing required for this service.
+
+</details>
+
+---
+
+<details>
+<summary><strong>Step 4 — Enable Firestore Database</strong></summary>
+
+1. In the left sidebar click **"Build" → "Firestore Database"**
 2. Click **"Create database"**
-3. Choose **"Start in production mode"** → click **"Next"**
-4. Choose a location close to your users → click **"Enable"**
-5. Once created, go to the **"Rules"** tab and paste these rules:
+3. When asked about security rules, choose **"Start in production mode"** → click **"Next"**
+4. Choose a **location** close to where your users are (e.g. `europe-west` for Europe) → click **"Enable"**
+5. Wait for the database to be provisioned (about 1 minute)
+
+**Now set the security rules:**
+
+6. Click the **"Rules"** tab at the top of the Firestore page
+7. Delete the existing content and paste the following:
 
 ```
 rules_version = '2';
@@ -134,14 +192,32 @@ service cloud.firestore {
 }
 ```
 
-6. Click **"Publish"**
+8. Click **"Publish"**
 
-### Storage
-1. In the sidebar click **"Build" → "Storage"**
+These rules ensure that:
+- Users can only read/write their own profile
+- Only chat participants can access a chat and its messages
+- Only the admin can change app-wide settings (API keys, model)
+
+</details>
+
+---
+
+<details>
+<summary><strong>Step 5 — Enable Storage</strong></summary>
+
+Storage is used for profile pictures and voice messages.
+
+1. In the left sidebar click **"Build" → "Storage"**
 2. Click **"Get started"**
-3. Choose **"Start in production mode"** → click **"Next"**
-4. Choose the same location as Firestore → click **"Done"**
-5. Go to the **"Rules"** tab and paste:
+3. When asked about security rules, choose **"Start in production mode"** → click **"Next"**
+4. Choose the **same location** you selected for Firestore → click **"Done"**
+5. Wait for the bucket to be created
+
+**Now set the security rules:**
+
+6. Click the **"Rules"** tab at the top of the Storage page
+7. Delete the existing content and paste the following:
 
 ```
 rules_version = '2';
@@ -154,104 +230,133 @@ service firebase.storage {
 }
 ```
 
-6. Click **"Publish"**
+8. Click **"Publish"**
+
+These rules allow any authenticated user to upload and download files (profile pictures, voice messages).
 
 </details>
 
 ---
 
 <details>
-<summary><strong>Step 3 — Get your Firebase credentials</strong></summary>
+<summary><strong>Step 6 — Get your Firebase credentials</strong></summary>
 
-### Web app credentials (for the setup wizard)
+You need two things from Firebase: a **Web app config** (for the setup wizard) and a **`google-services.json`** file (for the Android build).
 
-1. In Firebase Console, click the ⚙️ gear icon → **"Project settings"**
-2. Scroll down to **"Your apps"**
-3. If you see no Web app, click **"Add app"** → choose the **`</>`** (Web) icon
-4. Enter an app nickname (e.g. `famtalk-web`) and click **"Register app"**
-5. Under **"SDK setup and configuration"**, select **"Config"**
-6. You will see a `firebaseConfig` object — you will need these values when running `node setup.js`
+### Web app config (6 values for the setup wizard)
+
+1. Click the ⚙️ gear icon in the top-left → **"Project settings"**
+2. Scroll down to the **"Your apps"** section
+3. If you don't see a Web app (the `</>` icon), click **"Add app"** → choose **`</>`** (Web)
+4. Enter a nickname (e.g. `famtalk-web`), leave "Firebase Hosting" unchecked, click **"Register app"**
+5. Under **"SDK setup and configuration"**, make sure **"Config"** is selected
+6. You will see a block like this — keep this page open, you'll need it in Step 8:
+
+```js
+const firebaseConfig = {
+  apiKey: "AIza...",
+  authDomain: "my-famtalk.firebaseapp.com",
+  projectId: "my-famtalk",
+  storageBucket: "my-famtalk.firebasestorage.app",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abcdef"
+};
+```
 
 ### Android app + google-services.json
 
-1. Still in **"Project settings"** → **"Your apps"**
-2. Click **"Add app"** → choose the Android icon
-3. Enter the **Android package name** — use the same one you will give to the setup wizard (e.g. `com.smith.familytalk`)
-4. App nickname is optional — click **"Register app"**
+1. Still in **"Project settings"** → **"Your apps"**, click **"Add app"** → choose the **Android** icon
+2. In **"Android package name"**, enter the unique identifier you want for your app (e.g. `com.smith.familytalk`)
+   - Use your own name, not `smith` — this must be globally unique on Android
+   - Write it down — you'll need the exact same string in Step 8
+3. App nickname and debug SHA-1 are optional — leave them blank
+4. Click **"Register app"**
 5. Click **"Download google-services.json"**
-6. Move that file into the **root folder** of the FamTalk project (next to `package.json`)
+6. Move that file into the **root folder** of the FamTalk project (the same folder as `package.json` and `setup.js`)
 
-> `google-services.json` is gitignored and will never be committed.
+> `google-services.json` contains your Firebase credentials and is gitignored — it will never be committed to the repository.
 
 </details>
 
 ---
 
 <details>
-<summary><strong>Step 4 — Create an Expo account and project</strong></summary>
+<summary><strong>Step 7 — Create an Expo account and project</strong></summary>
+
+Expo is the service that builds your APK in the cloud without needing Android Studio.
 
 1. Go to https://expo.dev and sign up for a free account
-2. Install the EAS CLI (Expo Application Services):
+2. Install the EAS CLI globally on your computer:
 
 ```bash
 npm install -g eas-cli
 ```
 
-3. Log in:
+3. Log in to your Expo account from the terminal:
 
 ```bash
 eas login
 ```
 
-4. Inside the FamTalk project folder, initialise your Expo project:
+4. Navigate to the FamTalk project folder and initialise the Expo project:
 
 ```bash
+cd FamTalk
 npx eas init
 ```
 
-   This creates a project on expo.dev and prints a **Project ID** (a UUID).
+This links the project to your Expo account and prints a **Project ID** (a UUID like `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`).
 
-5. Go to https://expo.dev → open your project → copy the **Project ID** from the Overview page — you will need it in the setup wizard.
+5. You can also find the Project ID at any time by going to https://expo.dev → your project → **Overview** page.
+
+> The free Expo plan includes **30 builds per month**, which is far more than enough for a family app. You will realistically rebuild only when you update the app.
 
 </details>
 
 ---
 
 <details>
-<summary><strong>Step 5 — Run the setup wizard</strong></summary>
+<summary><strong>Step 8 — Run the setup wizard</strong></summary>
 
-With Firebase credentials ready and Expo project ID in hand, run:
+With everything above ready, run the interactive setup wizard:
 
 ```bash
 node setup.js
 ```
 
-The wizard will ask for:
-- Firebase API Key, Auth Domain, Project ID, Storage Bucket, Messaging Sender ID, App ID
-- Expo Project ID
-- Android Package Name
+The wizard supports **English, Italian, Chinese, and Thai** — choose your language at the start.
 
-It writes `src/user-config.js` automatically. That file is gitignored.
+It will ask for:
+- **Firebase API Key** — from the `firebaseConfig` block in Step 6
+- **Auth Domain** — e.g. `my-famtalk.firebaseapp.com`
+- **Project ID** — e.g. `my-famtalk`
+- **Storage Bucket** — e.g. `my-famtalk.firebasestorage.app`
+- **Messaging Sender ID** — the long number in `firebaseConfig`
+- **App ID** — e.g. `1:123456789:web:abcdef`
+- **Expo Project ID** — the UUID from Step 7
+- **Android Package Name** — the one you chose in Step 6 (e.g. `com.smith.familytalk`)
+
+The wizard writes `src/user-config.js` automatically. That file is gitignored and stays only on your machine.
 
 </details>
 
 ---
 
 <details>
-<summary><strong>Step 6 — Build the APK</strong></summary>
+<summary><strong>Step 9 — Build the APK</strong></summary>
+
+Install dependencies and start the cloud build:
 
 ```bash
 npm install
 npx eas build --platform android --profile preview
 ```
 
-- Expo builds in the cloud — no Android Studio needed
-- When the build finishes, Expo prints a **download link** for the APK
-- Share that link with your family members to install the app
+- Expo builds in the cloud — **no Android Studio or local toolchain needed**
+- The first build may take **10–20 minutes** (queue + build time); subsequent builds are faster
+- When done, Expo prints a **direct download link** for the APK file
 
-> The first build may take 10–20 minutes. Subsequent builds are faster.
-
-To build a production APK (for Google Play Store):
+To build a production-signed APK (e.g. for the Google Play Store):
 
 ```bash
 npx eas build --platform android --profile production
@@ -262,21 +367,40 @@ npx eas build --platform android --profile production
 ---
 
 <details>
-<summary><strong>Step 7 — First login and admin setup</strong></summary>
+<summary><strong>Step 10 — First login and admin setup</strong></summary>
 
-1. Install the APK on your Android device
-2. Open FamTalk and tap **Register** to create the first account
-3. The first account created is automatically made **admin**
-4. Go to **Settings** (⚙️ icon)
-5. Under **Translation (Admin)**, enter your:
-   - **Anthropic API Key** (starts with `sk-ant-`) — used for message translation
-   - **OpenAI API Key** (starts with `sk-`) — used for voice message transcription
-6. Select the AI model (Haiku = faster & cheaper, Sonnet = more accurate)
+1. Download the APK from the Expo link and install it on your Android device
+   - You may need to allow "Install from unknown sources" in your Android settings
+2. Open FamTalk and tap **Register** to create the first account — use your own name and email
+3. **The first account registered is automatically the admin.** This gives you access to the Translation settings inside the app.
+4. Go to **Settings** (bottom tab) → scroll to **Translation (Admin)**
+5. Enter your:
+   - **Anthropic API Key** (starts with `sk-ant-`) — get it from https://console.anthropic.com
+   - **OpenAI API Key** (starts with `sk-`) — get it from https://platform.openai.com
+6. Choose the AI model:
+   - **Haiku** — faster and cheaper (good for most families)
+   - **Sonnet** — more accurate translations (recommended if quality matters more than cost)
 7. Tap **Save settings**
 
-> The API keys are stored in your Firebase project (Firestore `config/secrets`), not in the app code. Only the admin can change them.
+> The API keys are stored in your Firebase project (Firestore `config/secrets`). They are never stored in the app code or this repository. Only the admin can view or change them.
 
-Now share the APK download link with your family and have them register!
+</details>
+
+---
+
+<details>
+<summary><strong>Step 11 — Share the app with your family</strong></summary>
+
+You're done with the hard part. Now:
+
+1. Copy the **APK download link** from Expo (or re-find it at https://expo.dev → your project → Builds)
+2. Send the link to your family members via WhatsApp, email, or any messaging app
+3. They tap the link on their Android phone, download the APK, and install it
+   - They may need to allow "Install from unknown sources" once
+4. They open FamTalk, tap **Register**, choose their name and their language (Italian, English, Chinese, or Thai)
+5. They add each other using **invite codes** — each user has a unique code visible in their profile
+
+That's it. **Your family members don't need Firebase, Expo, Node.js, or any technical knowledge.** They just install and use the app like any other.
 
 </details>
 
@@ -335,19 +459,34 @@ famtalk/
 ## Troubleshooting
 
 **`src/user-config.js not found`**
-→ Run `node setup.js`
+→ Run `node setup.js` from the project root folder.
 
 **`google-services.json not found` during build**
-→ Download it from Firebase Console and place it in the project root
+→ Download it from Firebase Console (Project settings → Your apps → Android app → Download google-services.json) and place it in the root of the project (same folder as `package.json`).
 
 **Build fails with "package name already used"**
-→ Your Android package name must be globally unique. Use `com.yourname.familytalk` instead of a generic name.
+→ Your Android package name must be globally unique across all Android apps. Avoid generic names like `com.famtalk.app`. Use something personal like `com.yourname.familytalk`.
+
+**"Permission denied" or "Missing or insufficient permissions" in the app**
+→ Your Firestore or Storage security rules were not published correctly. Go back to Step 4 and Step 5, re-paste the rules, and make sure you clicked **"Publish"**.
+
+**Storage not working / photos or voice messages not uploading**
+→ Firebase Storage requires the Blaze plan (see Step 2). Make sure you upgraded your project and that the Storage bucket was created successfully.
 
 **Translation not working**
-→ Log in as admin, go to Settings, and enter your Anthropic API key.
+→ Log in as admin, go to Settings → Translation (Admin), and make sure your Anthropic API key is entered and saved correctly. The key must start with `sk-ant-`.
+
+**Voice transcription not working**
+→ Check that your OpenAI API key is entered in Settings. The key starts with `sk-`. Make sure your OpenAI account has available credit.
 
 **Push notifications not working**
-→ Make sure your Expo Project ID in `setup.js` matches the one in your expo.dev account.
+→ Make sure the Expo Project ID you entered in the setup wizard matches exactly the one shown on your project's Overview page at https://expo.dev.
+
+**"eas: command not found"**
+→ Run `npm install -g eas-cli` to install the Expo CLI globally, then try again.
+
+**The app installs but shows a blank screen**
+→ The `src/user-config.js` may contain incorrect Firebase credentials. Run `node setup.js` again with the correct values from your Firebase Console.
 
 ---
 
