@@ -2,7 +2,7 @@
 
 **A multilingual family chat app powered by AI translation.**
 
-🇮🇹 🇬🇧 🇨🇳 🇹🇭 🇳🇱 🇪🇸 🇫🇷 🇧🇷 🇷🇺
+:it: :gb: :cn: :thailand: :netherlands: :es: :fr: :brazil: :ru:
 
 FamTalk lets families communicate across language barriers in real time. Messages are automatically translated into each member's preferred language using the Anthropic Claude API. Perfect for multicultural families where members speak different languages — Italian, Spanish, Russian, Chinese, and more.
 
