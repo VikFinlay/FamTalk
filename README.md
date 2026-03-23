@@ -2,7 +2,9 @@
 
 **A multilingual family chat app powered by AI translation.**
 
-FamTalk lets families communicate across language barriers in real time. Messages are automatically translated into each member's preferred language using the Anthropic Claude API. Perfect for multicultural families where members speak Italian, Chinese, Thai, or any language you add.
+🇮🇹 🇬🇧 🇨🇳 🇹🇭 🇳🇱 🇪🇸 🇫🇷 🇧🇷 🇷🇺
+
+FamTalk lets families communicate across language barriers in real time. Messages are automatically translated into each member's preferred language using the Anthropic Claude API. Perfect for multicultural families where members speak different languages — Italian, Spanish, Russian, Chinese, and more.
 
 > Built with React Native (Expo), Firebase, and the Anthropic Claude API.
 > Licensed under MIT — created by [Vik Finlay](https://github.com/VikFinlay).
